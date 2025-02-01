@@ -34,6 +34,28 @@ app.post("/proxy", async (req, res) => {
   }
 });
 
+app.post("/america", async (req, res) => {
+  try {
+    // Forward the request to the Zapier webhook
+    const response = await fetch("https://hooks.zapier.com/hooks/catch/21196050/2fxya2n/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req.body), // Forward the request body
+    });
+
+    // Handle the response from Zapier
+    const responseData = await response.json();
+
+    // Send the response back to the client
+    res.status(response.status).json(responseData);
+  } catch (error) {
+    console.error("Error forwarding request:", error);
+    res.status(500).json({ error: "Failed to forward the request" });
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`);
